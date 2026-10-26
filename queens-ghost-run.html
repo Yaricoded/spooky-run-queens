@@ -1,0 +1,580 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Queens Ghost Run</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#0f0a16;
+    --bg2:#181024;
+    --card:#1c1329;
+    --line:#352647;
+    --text:#efe7dc;
+    --muted:#a99bb8;
+    --pumpkin:#ff7a1a;
+    --pumpkin-d:#c75a0a;
+    --ecto:#8dff6a;
+    --blood:#ff5a5a;
+    --bone:#f6efe3;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  :root{color-scheme:dark}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font:16px/1.55 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--pumpkin)}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+  h1,h2,h3{font-family:Cinzel,Georgia,serif;letter-spacing:.02em;margin:0}
+
+  /* hero */
+  .hero{
+    position:relative;overflow:hidden;
+    padding:56px 0 40px;
+    background:
+      radial-gradient(520px 520px at 82% -8%, rgba(255,122,26,.30), transparent 62%),
+      radial-gradient(700px 300px at 10% 110%, rgba(141,255,106,.10), transparent 70%),
+      linear-gradient(180deg,#1a0f27 0%, var(--bg) 100%);
+    border-bottom:1px solid var(--line);
+  }
+  .moon{
+    position:absolute;right:max(24px,6vw);top:26px;width:104px;height:104px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #fff7e6 0 40%, #ffd9a0 70%, #f0a850 100%);
+    box-shadow:0 0 90px 24px rgba(255,160,60,.35);opacity:.92;
+  }
+  .bats{position:absolute;right:max(40px,12vw);top:34px;width:210px;height:90px;pointer-events:none}
+  .kicker{color:var(--pumpkin);font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:.78rem}
+  .hero h1{font-size:clamp(2.2rem,6.2vw,3.9rem);font-weight:900;line-height:1.05;margin:10px 0 12px;max-width:14ch}
+  .hero h1 em{font-style:normal;color:var(--pumpkin);text-shadow:0 0 28px rgba(255,122,26,.45)}
+  .hero p.sub{max-width:58ch;color:#d4c8e0;margin:0 0 26px;font-size:1.05rem}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:760px}
+  .stat{background:rgba(28,19,41,.8);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;backdrop-filter:blur(4px)}
+  .stat .n{font:900 1.7rem/1.1 Cinzel,Georgia,serif;color:var(--bone)}
+  .stat .n small{font-size:.9rem;font-weight:500;color:var(--muted)}
+  .stat .l{font-size:.78rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
+  .stat.hot .n{color:var(--pumpkin)}
+
+  section{padding:36px 0}
+  section h2{font-size:1.6rem;margin-bottom:6px}
+  section .lede{color:var(--muted);margin:0 0 18px;max-width:64ch}
+
+  /* planner */
+  .planner{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:18px;grid-template-columns:repeat(2,1fr)}
+  .field label{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+  .field label b{color:var(--bone);font-weight:600;text-transform:none;letter-spacing:0;font-size:.95rem}
+  .timerow{display:flex;gap:8px;align-items:stretch}
+  .timerow .chip{min-width:56px;padding:9px 12px}
+  select,input[type=time]{
+    width:100%;background:var(--bg2);color:var(--text);border:1px solid var(--line);border-radius:10px;
+    padding:11px 12px;font:inherit;min-height:44px;
+  }
+  input[type=range]{width:100%;accent-color:var(--pumpkin);min-height:32px}
+  .presets{display:flex;gap:8px;flex-wrap:wrap;grid-column:1/-1}
+  .chip{
+    background:var(--bg2);color:var(--text);border:1px solid var(--line);border-radius:999px;
+    padding:9px 16px;font:inherit;font-size:.9rem;cursor:pointer;min-height:40px;
+  }
+  .chip:hover{border-color:var(--pumpkin)}
+  .chip[aria-pressed=true]{background:var(--pumpkin);color:#1b0d00;border-color:var(--pumpkin);font-weight:600}
+  .fine{font-size:.82rem;color:var(--muted);grid-column:1/-1;margin:0}
+
+  /* map */
+  #map{min-height:320px;border-radius:var(--radius);border:1px solid var(--line);background:#120c1b;overflow:hidden}
+  .maprow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;background:var(--pumpkin);color:#1b0d00;text-decoration:none;
+    border:0;border-radius:10px;padding:11px 16px;font-weight:600;min-height:44px;font-size:.95rem;cursor:pointer;
+  }
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+  .src{font-size:.82rem;color:var(--muted)}
+  .schem{background:#0e1d2b;padding:0;overflow:hidden}
+  .schem svg{width:100%;max-height:900px;height:auto;display:block}
+
+  /* legs table */
+  .legs{width:100%;border-collapse:collapse;font-size:.95rem}
+  .legs th{font-size:.74rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  .legs td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .legs td.num{white-space:nowrap;font-variant-numeric:tabular-nums}
+  .legs td.cue{color:#d9cfe6}
+  .legs tr.total td{font-weight:600;color:var(--bone);border-bottom:0}
+  .tablewrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:6px 8px;overflow-x:auto}
+
+  /* stops */
+  .stops{display:grid;gap:16px}
+  .stop{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:grid;grid-template-columns:56px 1fr;gap:16px}
+  .badge{
+    width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+    background:radial-gradient(circle at 35% 30%, #ffa04d, var(--pumpkin) 55%, var(--pumpkin-d));
+    color:#1b0d00;font:900 1.25rem Cinzel,serif;box-shadow:0 0 20px rgba(255,122,26,.4)
+  }
+  .stop h3{font-size:1.25rem;line-height:1.2}
+  .addr{color:var(--muted);font-size:.9rem;margin:2px 0 10px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+  .tag{font-size:.78rem;padding:3px 10px;border-radius:12px;border:1px solid var(--line);color:var(--muted)}
+  .stop > div{min-width:0}
+  .tag.ok{color:var(--ecto);border-color:rgba(141,255,106,.4)}
+  .tag.no{color:var(--blood);border-color:rgba(255,90,90,.45)}
+  .tag.ext{color:#ffd37a;border-color:rgba(255,211,122,.4)}
+  .facts{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+  .facts li{padding-left:0}
+  .facts .k{
+    display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:1px 7px;border-radius:5px;margin-right:8px;vertical-align:1px
+  }
+  .k.real{background:rgba(141,255,106,.14);color:var(--ecto)}
+  .k.leg{background:rgba(255,122,26,.16);color:var(--pumpkin)}
+  .stop .bail{margin-top:12px;font-size:.88rem;color:var(--muted)}
+  .stop .bail b{color:var(--text);font-weight:600}
+  .fright{margin-top:10px;font-size:.82rem;color:var(--muted)}
+  .fright .sk{letter-spacing:2px;color:var(--pumpkin);font-size:.95rem}
+  .fright .sk i{font-style:normal;opacity:.22}
+  .eta{font:700 1.05rem Cinzel,serif;color:var(--bone)}
+
+  /* events */
+  .events{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .ev{background:linear-gradient(160deg,#241636,var(--card));border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .ev h3{font-size:1.1rem;margin-bottom:6px}
+  .ev .when{color:var(--pumpkin);font-weight:600;font-size:.9rem;margin-bottom:8px}
+  .ev p{margin:0;color:#d4c8e0;font-size:.95rem}
+
+  footer{padding:30px 0 56px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
+  footer p{margin:6px 0}
+
+  @media (max-width:720px){
+    .hero{padding:78px 0 30px}
+    .moon{width:56px;height:56px;top:14px;right:16px}
+    .bats{display:none}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .planner,.events{grid-template-columns:1fr}
+    .stop{grid-template-columns:1fr}
+    .badge{width:42px;height:42px}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .moon{animation:glow 6s ease-in-out infinite alternate}
+    @keyframes glow{from{box-shadow:0 0 70px 18px rgba(255,160,60,.28)}to{box-shadow:0 0 110px 34px rgba(255,160,60,.42)}}
+  }
+</style>
+
+<header class="hero">
+  <div class="moon" aria-hidden="true"></div>
+  <svg class="bats" viewBox="0 0 210 90" aria-hidden="true" fill="#0b0710">
+    <path d="M20 40c8-14 18-14 24-4 4-6 12-6 16 0 6-10 16-10 24 4-10-4-14 0-18 8-4-8-8-10-14-4-6-6-10-4-14 4-4-8-8-12-18-8z" transform="translate(0,8)"/>
+    <path d="M120 20c6-10 14-10 18-3 3-4 9-4 12 0 4-7 12-7 18 3-8-3-11 0-14 6-3-6-6-7-10-3-4-4-8-3-10 3-3-6-6-9-14-6z" transform="translate(10,16) scale(.8)"/>
+    <path d="M150 62c5-8 11-8 15-2 2-3 7-3 9 0 3-6 9-6 14 2-6-2-9 0-11 5-2-5-5-6-8-3-3-3-6-2-8 3-2-5-5-7-11-5z" transform="translate(-4,-4) scale(.9)"/>
+  </svg>
+  <div class="wrap">
+    <div class="kicker">Roosevelt Island · Long Island City · Sunnyside · Halloween season</div>
+    <h1>The Queens <em>Ghost</em> Run</h1>
+    <p class="sub">Four stops from the haunted island in the East River to a cemetery with about 3 million burials: a Victorian smallpox hospital ruin, the Octagon tower of an old asylum, a lighthouse with a carved-stone legend, and Calvary Cemetery in Queens. Pick your pace and start time and the page works out your timing, with every stop checked against its opening hours.</p>
+    <div class="stats" aria-live="polite">
+      <div class="stat"><div class="n" id="sDist">4.3<small> mi</small></div><div class="l">Distance</div></div>
+      <div class="stat"><div class="n" id="sRun">0<small> min</small></div><div class="l">Running time</div></div>
+      <div class="stat"><div class="n" id="sTotal">0<small> min</small></div><div class="l">With stops</div></div>
+      <div class="stat hot"><div class="n" id="sFinish">—</div><div class="l">Finish at Calvary Cemetery</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section aria-labelledby="planH">
+  <h2 id="planH">Set your pace</h2>
+  <p class="lede">Everything below recalculates as you move the sliders. The default is an easy 10:00/mile with 4 minutes at each stop for photos and reading plaques.</p>
+  <div class="planner">
+    <div class="field">
+      <label for="day">Day <b id="dayNote"></b></label>
+      <select id="day">
+        <option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option>
+        <option value="3">Wednesday</option><option value="4">Thursday</option><option value="5" selected>Friday</option>
+        <option value="6">Saturday</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="start">Start time at the Smallpox Hospital ruin <b id="startOut"></b></label>
+      <div class="timerow">
+        <button class="chip" id="tminus" type="button" aria-label="Start 15 minutes earlier">−15</button>
+        <input type="time" id="start" value="11:30">
+        <button class="chip" id="tplus" type="button" aria-label="Start 15 minutes later">+15</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="pace">Running pace <b id="paceOut"></b></label>
+      <input type="range" id="pace" min="390" max="840" step="15" value="600">
+    </div>
+    <div class="field">
+      <label for="stopmin">Time at each stop <b id="stopOut"></b></label>
+      <input type="range" id="stopmin" min="0" max="15" step="1" value="4">
+    </div>
+    <div class="presets" id="pacePresets" role="group" aria-label="Pace presets">
+      <button class="chip" data-pace="720" data-stop="6" aria-pressed="false">Ghost jog · 12:00/mi</button>
+      <button class="chip" data-pace="600" data-stop="4" aria-pressed="true">Steady · 10:00/mi</button>
+      <button class="chip" data-pace="510" data-stop="2" aria-pressed="false">Spirited · 8:30/mi</button>
+      <button class="chip" data-pace="450" data-stop="1" aria-pressed="false">Hunted · 7:30/mi</button>
+    </div>
+    <div class="presets" id="startPresets" role="group" aria-label="Start time presets">
+      <button class="chip" data-start="480" type="button" aria-pressed="false">Early · 8:00 AM</button>
+      <button class="chip" data-start="690" type="button" aria-pressed="true">Late morning · 11:30 AM</button>
+      <button class="chip" data-start="840" type="button" aria-pressed="false">Afternoon · 2:00 PM</button>
+      <button class="chip" data-start="1020" type="button" aria-pressed="false">Dusk · 5:00 PM</button>
+    </div>
+    <p class="fine">Stop times are spent before moving on to the next stop. Opening hours were pulled from Google Places in October 2026; confirm before you go, especially for Calvary Cemetery, which closes at 4:30 PM.</p>
+  </div>
+</section>
+
+<section aria-labelledby="mapH">
+  <h2 id="mapH">The route</h2>
+  <p class="lede">An illustrated map of the route. Each stop shows the time you will reach it, and it updates when you change your start time. Use the Google Maps button for turn-by-turn street directions.</p>
+  <div id="map"></div>
+  <div class="maprow">
+    <a class="btn" id="gmaps" href="#" target="_blank" rel="noopener">Open in Google Maps</a>
+    <span class="src" id="routeSrc"></span>
+  </div>
+</section>
+
+<section aria-labelledby="legH">
+  <h2 id="legH">Leg by leg</h2>
+  <p class="lede">Distances are estimates, not GPS measurements.</p>
+  <div class="tablewrap">
+    <table class="legs">
+      <thead><tr><th>Leg</th><th>Miles</th><th>Run</th><th>Arrive</th><th>Which way</th></tr></thead>
+      <tbody id="legBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<section aria-labelledby="stopH">
+  <h2 id="stopH">The four stops</h2>
+  <p class="lede"><span class="k real" style="padding:1px 7px;border-radius:5px;font-size:.68rem;font-weight:700;letter-spacing:.08em">DOCUMENTED</span> marks the historical record. <span class="k leg" style="padding:1px 7px;border-radius:5px;font-size:.68rem;font-weight:700;letter-spacing:.08em">LEGEND</span> marks ghost stories and folklore, which we are happy to repeat but cannot vouch for.</p>
+  <div class="stops" id="stops"></div>
+</section>
+
+<section aria-labelledby="evH">
+  <h2 id="evH">Good to know</h2>
+  <p class="lede">A shorter version of the run, and one Queens landmark that did not make the route.</p>
+  <div class="events">
+    <div class="ev">
+      <h3>The short version, about 3 miles</h3>
+      <div class="when">Island only</div>
+      <p>Skip Calvary Cemetery. Run the first three stops, which are all on Roosevelt Island, then finish at the Roosevelt Island Bridge or the F train and tram. That is about 2.9 miles including the run back south from the lighthouse, and every stop on it is outdoors.</p>
+    </div>
+    <div class="ev">
+      <h3>Add-on: Steinway Mansion, Astoria</h3>
+      <div class="when">18-33 41st St · private, view from the street</div>
+      <p>This 27-room summer house was built in 1857–58 by Benjamin Pike Jr., and the piano maker William Steinway bought it in 1870. It is a New York City Landmark. I could not find a documented ghost story or regular public hours for it, and it is about 4 miles northeast of the Roosevelt Island Bridge, so it is not one of the stops.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Notes.</b> Leg distances and times are estimates, not GPS measurements, and the long leg to Calvary crosses the Roosevelt Island Bridge, so check the live directions in Google Maps. Fright levels are our own rating. The Smallpox Hospital ruin is fenced off for now and is seen from outside. The Octagon is a private apartment building, so the run views it from the sidewalk. The story of the carved stone at the lighthouse is a legend. I did not find a documented ghost story for the other stops, so their fright levels reflect the history rather than reported hauntings. Opening hours came from Google Places and may change, so check before you go.</p>
+    <p><b>Sources.</b>
+      <a href="https://en.wikipedia.org/wiki/Smallpox_Hospital">Wikipedia: Smallpox Hospital</a> ·
+      <a href="https://en.wikipedia.org/wiki/New_York_City_Lunatic_Asylum">Wikipedia: New York City Lunatic Asylum (the Octagon)</a> ·
+      <a href="https://en.wikipedia.org/wiki/Blackwell_Island_Light">Wikipedia: Blackwell Island Light</a> ·
+      <a href="https://en.wikipedia.org/wiki/Roosevelt_Island">Wikipedia: Roosevelt Island</a> ·
+      <a href="https://en.wikipedia.org/wiki/Calvary_Cemetery_(Queens)">Wikipedia: Calvary Cemetery (Queens)</a> ·
+      <a href="https://en.wikipedia.org/wiki/Steinway_Mansion">Wikipedia: Steinway Mansion</a> ·
+      Stop hours and coordinates from Google Places.
+    </p>
+    <p>Run safe: use crosswalks, carry ID for the pubs, and give the African Burial Ground and the churchyards the quiet they deserve.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- data ----------
+  var H = function(o,c){return [o*60,c*60];}; // hours -> minutes
+  var daily = function(o,c){return [H(o,c),H(o,c),H(o,c),H(o,c),H(o,c),H(o,c),H(o,c)];};
+  // index 0 = Sunday ... 6 = Saturday; null = closed. Close times past 24 mean after midnight.
+  var STOPS = [
+    { name:"Smallpox Hospital ruin (Renwick Ruin)", short:"Smallpox Hospital", addr:"South tip of Roosevelt Island · Southpoint Park", lat:40.7516543, lng:-73.9595399, fright:4,
+      hours:daily(0,24), hoursTxt:"Fenced off, view from outside; lit at night", kind:"ext",
+      facts:[
+        {r:1,t:"James Renwick Jr. designed the main building, which was built in 1854–56 and opened in 1856 as the Smallpox Hospital. The hospital closed in 1875 and the building became a nurses' training center. It and the island's Charity Hospital both closed in the 1950s."},
+        {r:1,t:"It is the city's only landmarked ruin. It has been lit every night since 1995 to raise money for stabilizing the walls, and it is fenced off while that work goes on."}
+      ],
+      bail:"F train Roosevelt Island station (about 0.6 mi) · Tramway (about 0.5 mi)" },
+    { name:"The Octagon (New York City Lunatic Asylum)", short:"The Octagon", addr:"888 Main St · Roosevelt Island", lat:40.7689555, lng:-73.9437121, fright:4,
+      hours:daily(0,24), hoursTxt:"Apartment building, view from the sidewalk", kind:"ext",
+      facts:[
+        {r:1,t:"Alexander Jackson Davis designed the Octagon, built in 1834 and opened in 1841 as the main entrance to the New York City Lunatic Asylum. It closed in 1955 and the building was abandoned, then suffered decades of decay and two fires."},
+        {r:1,t:"Nellie Bly's 1887 book Ten Days in a Mad-House exposed the mistreatment of patients at the asylum. The Octagon was restored and reopened in April 2006 as the lobby of two apartment buildings with 500 units."},
+        {r:1,t:"The island was called Blackwell's Island until 1921, Welfare Island after that, and Roosevelt Island since August 20, 1973. It once held a penitentiary (1830), an almshouse (1847) and a workhouse (1852)."}
+      ],
+      bail:"Free red bus on Main St · F train Roosevelt Island (about 0.8 mi)" },
+    { name:"Blackwell Island Lighthouse", short:"Blackwell Island Light", addr:"Lighthouse Park · north tip of Roosevelt Island", lat:40.7728383, lng:-73.9401813, fright:3,
+      hours:daily(0,24), hoursTxt:"Lighthouse Park at the island's north tip; check park hours", kind:"ext",
+      facts:[
+        {r:1,t:"The 50-foot lighthouse was first lit in 1872 with James Renwick Jr. as supervising architect. It operated until about 1940 and is a New York City Landmark. It was restored again in 2021–22."},
+        {r:0,t:"A stone near the lighthouse once carried an inscription crediting a John McCarthy with building the tower, and legends link McCarthy and a Thomas Maxey to its construction. One version says an asylum inmate built a fort here that was torn down for the lighthouse. None of it is verified."}
+      ],
+      bail:"Free red bus on Main St · F train Roosevelt Island (about 1.2 mi)" },
+    { name:"Calvary Cemetery", short:"Calvary Cemetery", addr:"49-02 Laurel Hill Blvd · Woodside, Queens", lat:40.7332063, lng:-73.9138527, fright:5,
+      hours:daily(9,16.5), hoursTxt:"Daily 9 AM – 4:30 PM", kind:"site",
+      facts:[
+        {r:1,t:"Calvary opened in 1848, with the first burial on July 31 and consecration by Archbishop John Hughes that August. It holds about 3 million burials, the most of any cemetery in the United States, on 365 acres."},
+        {r:1,t:"By 1852 there were 50 burials a day, half of them poor Irish children under seven. Buried here are Al Smith, Tony Bennett, Willie Keeler, Texas Guinan, Patsy Kelly, Lorenzo Da Ponte and both Robert F. Wagners, along with many Civil War Medal of Honor recipients and several mobsters."}
+      ],
+      bail:"7 train 46 St–Bliss St or 52 St (roughly 1 mi); check MTA" }
+  ];
+
+  // Estimates (miles) and directions for each leg.
+  var LEGS = [
+    { mi:1.20, cue:"North along Main St and the island's waterfront paths, passing the tramway station, to 888 Main St. The Octagon's stone tower is at the front of the apartment complex." },
+    { mi:0.35, cue:"Continue north to the island's tip. The lighthouse stands in Lighthouse Park at the northern end." },
+    { mi:4.60, cue:"Run south on Main St to the Roosevelt Island Bridge, the island's only road link to Queens, and cross into Long Island City. Then head southeast through Sunnyside to Calvary Cemetery at Laurel Hill Blvd. Use Google Maps for the Queens streets." }
+  ];
+  var legSrc = "estimate";
+
+  // ---------- state & helpers ----------
+  var $ = function(id){return document.getElementById(id);};
+  var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  var st = { day:5, start:11*60+30, pace:600, stopmin:4 };
+
+  function clock(m){
+    m = ((Math.round(m)%1440)+1440)%1440;
+    var h = Math.floor(m/60), mm = m%60, ap = h>=12?"PM":"AM";
+    h = h%12; if(h===0) h=12;
+    return h+":"+(mm<10?"0":"")+mm+" "+ap;
+  }
+  function dur(m){
+    m = Math.round(m);
+    if(m<60) return m+" min";
+    var h=Math.floor(m/60), r=m%60;
+    return h+" hr"+(r?" "+r+" min":"");
+  }
+  function paceTxt(s){ return Math.floor(s/60)+":"+("0"+(s%60)).slice(-2)+" /mi"; }
+  function isOpen(stop, day, t){
+    var d = stop.hours[day];
+    if(d && t>=d[0] && t<d[1]) return true;
+    var prev = stop.hours[(day+6)%7];
+    if(prev && prev[1]>1440 && t < prev[1]-1440) return true;
+    // arrival after midnight on a late-night run
+    if(t>=1440){ return isOpen(stop,(day+1)%7,t-1440); }
+    return false;
+  }
+  function totalMiles(){ return LEGS.reduce(function(a,l){return a+l.mi;},0); }
+
+  // Compute arrival times (in minutes since midnight of chosen day) for each stop.
+  function schedule(){
+    var arr=[], t=st.start;
+    for(var i=0;i<STOPS.length;i++){
+      arr.push(t);
+      if(i<LEGS.length) t += st.stopmin + LEGS[i].mi*st.pace/60;
+    }
+    return arr;
+  }
+
+  // ---------- render: stops ----------
+  function frightHTML(n){
+    var s=""; for(var i=0;i<5;i++) s += i<n ? "&#9679;" : "<i>&#9679;</i>";
+    return '<span class="sk" aria-label="'+n+' out of 5">'+s+'</span>';
+  }
+  function buildStops(){
+    var el=$("stops"), html="";
+    STOPS.forEach(function(s,i){
+      html += '<article class="stop" id="stop'+i+'">'+
+        '<div class="badge" aria-hidden="true">'+(i+1)+'</div>'+
+        '<div>'+
+          '<h3>'+s.name+'</h3>'+
+          '<div class="addr">'+s.addr+'</div>'+
+          '<div class="meta" id="meta'+i+'"></div>'+
+          '<ul class="facts">'+
+            s.facts.map(function(f){
+              return '<li><span class="k '+(f.r?"real":"leg")+'">'+(f.r?"Documented":"Legend")+'</span>'+f.t+'</li>';
+            }).join("")+
+          '</ul>'+
+          '<div class="fright">Fright level (our rating) '+frightHTML(s.fright)+'</div>'+
+          '<div class="bail"><b>Bail-out subway:</b> '+s.bail+'</div>'+
+        '</div></article>';
+    });
+    el.innerHTML = html;
+  }
+
+  // ---------- render: legs ----------
+  function renderLegs(arr){
+    var rows="", tot=totalMiles();
+    LEGS.forEach(function(l,i){
+      rows += '<tr><td class="num"><b>'+(i+1)+'</b> → <b>'+(i+2)+'</b></td>'+
+        '<td class="num">'+l.mi.toFixed(2)+'</td>'+
+        '<td class="num">'+dur(l.mi*st.pace/60)+'</td>'+
+        '<td class="num">'+clock(arr[i+1])+'</td>'+
+        '<td class="cue">'+l.cue+'</td></tr>';
+    });
+    rows += '<tr class="total"><td>Total</td><td class="num">'+tot.toFixed(2)+'</td><td class="num">'+dur(tot*st.pace/60)+'</td><td></td><td></td></tr>';
+    $("legBody").innerHTML = rows;
+  }
+
+  // ---------- render: stats, badges ----------
+  function render(){
+    var arr = schedule();
+    var tot = totalMiles();
+    var run = tot*st.pace/60;
+    var total = run + st.stopmin*(STOPS.length-1);
+
+    $("sDist").innerHTML = tot.toFixed(1)+"<small> mi</small>";
+    $("sRun").innerHTML = dur(run).replace(/(\d+) (hr|min)/g,'$1<small> $2</small>');
+    $("sTotal").innerHTML = dur(total).replace(/(\d+) (hr|min)/g,'$1<small> $2</small>');
+    $("sFinish").textContent = clock(arr[arr.length-1]);
+    $("paceOut").textContent = paceTxt(st.pace);
+    $("stopOut").textContent = st.stopmin+" min";
+    $("dayNote").textContent = "";
+    $("startOut").textContent = clock(st.start);
+
+    var closedCount=0;
+    STOPS.forEach(function(s,i){
+      var open = isOpen(s, st.day, arr[i]);
+      var tags = '<span class="tag eta">'+clock(arr[i])+'</span>';
+      if(s.kind==="ext"){
+        tags += '<span class="tag ext">Exterior stop</span>';
+      } else if(s.kind==="yard"){
+        tags += open ? '<span class="tag ok">Open on arrival</span>' : '<span class="tag no">Closed on arrival</span>';
+      } else {
+        tags += open ? '<span class="tag ok">Open on arrival</span>' : '<span class="tag no">Closed on arrival</span>';
+        if(!open) closedCount++;
+        if(!open && s.kind!=="pub") tags += '<span class="tag ext">Exterior still visible</span>';
+      }
+      tags += '<span class="tag">'+s.hoursTxt+'</span>';
+      $("meta"+i).innerHTML = tags;
+    });
+    if(closedCount){
+      $("dayNote").textContent = closedCount+" stop"+(closedCount>1?"s":"")+" closed on arrival";
+    } else {
+      $("dayNote").textContent = "all open on arrival";
+    }
+    renderLegs(arr);
+    updateEtas(arr);
+  }
+
+  // ---------- controls ----------
+  function parseStart(v){ var p=v.split(":"); return (+p[0])*60 + (+p[1]||0); }
+  $("day").addEventListener("change",function(e){ st.day=+e.target.value; render(); });
+  function setStart(m){
+    m=((Math.round(m)%1440)+1440)%1440; st.start=m;
+    var h=Math.floor(m/60), mm=m%60;
+    $("start").value=(h<10?"0":"")+h+":"+(mm<10?"0":"")+mm;
+    syncStartPresets(); render();
+  }
+  function syncStartPresets(){
+    document.querySelectorAll("#startPresets .chip").forEach(function(c){
+      c.setAttribute("aria-pressed", (+c.dataset.start===st.start)?"true":"false");
+    });
+  }
+  $("start").addEventListener("input",function(e){ if(e.target.value){ st.start=parseStart(e.target.value); syncStartPresets(); render(); } });
+  $("tminus").addEventListener("click",function(){ setStart(st.start-15); });
+  $("tplus").addEventListener("click",function(){ setStart(st.start+15); });
+  document.querySelectorAll("#startPresets .chip").forEach(function(c){
+    c.addEventListener("click",function(){ setStart(+c.dataset.start); });
+  });
+  $("pace").addEventListener("input",function(e){ st.pace=+e.target.value; syncPresets(); render(); });
+  $("stopmin").addEventListener("input",function(e){ st.stopmin=+e.target.value; syncPresets(); render(); });
+  var chips = document.querySelectorAll(".presets:not(#startPresets) .chip");
+  function syncPresets(){
+    chips.forEach(function(c){
+      c.setAttribute("aria-pressed", (+c.dataset.pace===st.pace && +c.dataset.stop===st.stopmin) ? "true":"false");
+    });
+  }
+  chips.forEach(function(c){
+    c.addEventListener("click",function(){
+      st.pace=+c.dataset.pace; st.stopmin=+c.dataset.stop;
+      $("pace").value=st.pace; $("stopmin").value=st.stopmin;
+      syncPresets(); render();
+    });
+  });
+
+  // ---------- Google Maps link ----------
+  function gmapsURL(){
+    var pt=function(s){return s.lat+","+s.lng;};
+    var wp = STOPS.slice(1,-1).map(pt).join("|");
+    return "https://www.google.com/maps/dir/?api=1&travelmode=walking&origin="+pt(STOPS[0])+
+           "&destination="+pt(STOPS[STOPS.length-1])+"&waypoints="+encodeURIComponent(wp);
+  }
+  $("gmaps").href = gmapsURL();
+
+  // ---------- map: illustrated mockup. Stops sit at their true coordinates; shoreline, parks and avenues are approximate. ----------
+  var etaEls=[];
+  function updateEtas(arr){
+    for(var i=0;i<etaEls.length;i++){ if(etaEls[i]) etaEls[i].textContent=clock(arr[i]); }
+  }
+  function mockMap(){
+    var el=$("map"); el.className="schem";
+    var lat0=40.7450, lng0=-73.9400, th=29*Math.PI/180;
+    var kx=111320*Math.cos(lat0*Math.PI/180), ky=110574;
+    function pr(lat,lng){
+      var x=(lng-lng0)*kx, y=(lat-lat0)*ky;
+      return { x: x*Math.cos(th)-y*Math.sin(th), y: -(x*Math.sin(th)+y*Math.cos(th)) };
+    }
+    function pts(a){ return a.map(function(q){var p=pr(q[0],q[1]); return p.x.toFixed(0)+","+p.y.toFixed(0);}).join(" "); }
+    function path(a){ return "M"+pts(a).replace(/ /g," L"); }
+    var P=STOPS.map(function(s){return pr(s.lat,s.lng);});
+    var xs=P.map(function(p){return p.x;}), ys=P.map(function(p){return p.y;});
+    var minx=Math.min.apply(null,xs)-1300, maxx=Math.max.apply(null,xs)+1100;
+    var miny=Math.min.apply(null,ys)-450, maxy=Math.max.apply(null,ys)+450;
+    var w=maxx-minx, h=maxy-miny;
+
+    // East River between Manhattan (west bank) and Queens (east bank). Approximate.
+    var westLL=[[40.7000,-73.9830],[40.7250,-73.9740],[40.7400,-73.9690],[40.7550,-73.9640],[40.7640,-73.9570],[40.7700,-73.9500],[40.7750,-73.9440],[40.7830,-73.9400],[40.8000,-73.9380]];
+    var eastLL=[[40.8000,-73.9250],[40.7830,-73.9290],[40.7720,-73.9370],[40.7650,-73.9410],[40.7580,-73.9455],[40.7500,-73.9520],[40.7440,-73.9580],[40.7250,-73.9600],[40.7000,-73.9650]];
+    var wp=westLL.map(function(q){return pr(q[0],q[1]);}), ep=eastLL.map(function(q){return pr(q[0],q[1]);});
+    var river="M"+wp.concat(ep).map(function(p){return p.x.toFixed(0)+","+p.y.toFixed(0);}).join(" L")+" Z";
+    var is1=pr(40.7513,-73.9602), is2=pr(40.7735,-73.9396);
+    var island="M"+is1.x.toFixed(0)+","+is1.y.toFixed(0)+" L"+is2.x.toFixed(0)+","+is2.y.toFixed(0);
+    var water=river, shorePath=river;
+    var g="";
+    for(var gx=Math.ceil(minx/90)*90; gx<maxx; gx+=90) g+='<line x1="'+gx+'" y1="'+(miny-900)+'" x2="'+gx+'" y2="'+(maxy+900)+'" class="gl"/>';
+    for(var gy=Math.ceil(miny/80)*80; gy<maxy; gy+=80) g+='<line x1="'+(minx-900)+'" y1="'+gy+'" x2="'+(maxx+900)+'" y2="'+gy+'" class="gl"/>';
+
+    function rect(lat,lng,wm,hm){ var c=pr(lat,lng); return '<rect x="'+(c.x-wm/2).toFixed(0)+'" y="'+(c.y-hm/2).toFixed(0)+'" width="'+wm+'" height="'+hm+'" rx="14" class="park"/>'; }
+    var navy="M0,0";
+    var parks=rect(40.7335,-73.9170,1500,1000);
+    var atlantic=[[40.7240,-73.9500],[40.7290,-73.9400]], flushing=[[40.7240,-73.9500],[40.7290,-73.9400]];
+    function lab(lat,lng,t,rot,cls){ var p=pr(lat,lng); return '<text x="'+p.x.toFixed(0)+'" y="'+p.y.toFixed(0)+'" class="'+(cls||"st")+'" text-anchor="middle" transform="rotate('+(rot||0)+' '+p.x.toFixed(0)+' '+p.y.toFixed(0)+')">'+t+'</text>'; }
+    var streets="";
+    var hoods=lab(40.7440,-73.9300,"LONG ISLAND CITY",0,"hood")+lab(40.7360,-73.9260,"SUNNYSIDE",0,"hood")+lab(40.7605,-73.9640,"MANHATTAN",0,"hood")+
+      lab(40.7620,-73.9420,"QUEENS",0,"hood")+lab(40.7290,-73.9112,"WOODSIDE",0,"hood")+lab(40.7600,-73.9570,"EAST RIVER",-55,"water")+lab(40.7690,-73.9480,"ROOSEVELT ISLAND",-55,"water");
+
+    var d="M"+P.map(function(p){return p.x.toFixed(0)+","+p.y.toFixed(0);}).join(" L");
+    var sides=[-1,-1,1,1], dots="";
+    etaEls=[];
+    P.forEach(function(p,i){
+      var right = sides[i]>0;
+      var tx = p.x+(right?70:-70), anchor = right?"start":"end";
+      dots+='<circle cx="'+p.x.toFixed(0)+'" cy="'+p.y.toFixed(0)+'" r="52" class="dot"/>'+
+        '<text x="'+p.x.toFixed(0)+'" y="'+(p.y+19).toFixed(0)+'" text-anchor="middle" class="dn">'+(i+1)+'</text>'+
+        '<text x="'+tx.toFixed(0)+'" y="'+(p.y+2).toFixed(0)+'" text-anchor="'+anchor+'" class="lb">'+STOPS[i].short+'</text>'+
+        '<text x="'+tx.toFixed(0)+'" y="'+(p.y+58).toFixed(0)+'" text-anchor="'+anchor+'" class="eta" data-i="'+i+'"></text>';
+    });
+    var sb=805, sx=maxx-sb-60, sy=maxy-60;
+    el.innerHTML='<svg viewBox="'+minx.toFixed(0)+' '+miny.toFixed(0)+' '+w.toFixed(0)+' '+h.toFixed(0)+'" role="img" aria-label="Illustrated map of the Queens run: three stops on Roosevelt Island from the Smallpox Hospital ruin to the lighthouse, then Calvary Cemetery in Queens">'+
+      '<style>.gl{stroke:#241a33;stroke-width:2}.shore{fill:none;stroke:#2c4a63;stroke-width:6}.park{fill:#17301f;stroke:#264d33;stroke-width:4}.navy{fill:#1c1628;stroke:#33284a;stroke-width:4}'+
+      '.road{fill:none;stroke:#3a2c4d;stroke-width:22;stroke-linecap:round;stroke-linejoin:round}.road.minor{stroke-width:12}'+
+      '.st{font:600 34px Inter,system-ui,sans-serif;fill:#8d7ea3;letter-spacing:3px}.hood{font:600 42px Inter,system-ui,sans-serif;fill:#43355a;letter-spacing:8px}'+
+      'text.water{fill:#3d6a8a;font:600 40px Inter,system-ui,sans-serif;letter-spacing:12px}'+
+      '.dot{fill:#ff7a1a;stroke:#1b0d00;stroke-width:6}.dn{font:900 58px Cinzel,Georgia,serif;fill:#1b0d00}'+
+      '.lb{font:600 58px Inter,system-ui,sans-serif;fill:#efe7dc;paint-order:stroke;stroke:#120c1b;stroke-width:16px;stroke-linejoin:round}'+
+      '.eta{font:700 48px Cinzel,Georgia,serif;fill:#ff9d4d;paint-order:stroke;stroke:#120c1b;stroke-width:14px;stroke-linejoin:round}.ax{font:500 40px Inter,system-ui,sans-serif;fill:#a99bb8}</style>'+
+      '<defs><clipPath id="landclip"><path d="'+water+'" clip-rule="evenodd"/></clipPath></defs>'+
+      '<rect x="'+(minx-7000)+'" y="'+(miny-9000)+'" width="'+(w+16000)+'" height="'+(h+18000)+'" style="fill:#150e1f"/>'+g+
+      '<path d="'+river+'" style="fill:#0e1d2b"/><path d="'+shorePath+'" class="shore"/><path d="'+island+'" style="fill:none;stroke:#150e1f;stroke-width:230;stroke-linecap:round"/><path d="'+island+'" style="fill:none;stroke:#2c4a63;stroke-width:244;stroke-linecap:round;opacity:.0"/>'+
+      parks+streets+hoods+
+      '<path d="'+d+'" fill="none" stroke="#ff7a1a" stroke-width="12" stroke-dasharray="30 22" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>'+dots+
+      '<text x="'+(minx+60)+'" y="'+(miny+90)+'" class="ax">N ↑ (map turned 29° to follow the Manhattan grid)</text>'+
+      '<line x1="'+sx+'" y1="'+sy+'" x2="'+(sx+sb)+'" y2="'+sy+'" stroke="#a99bb8" stroke-width="8"/>'+
+      '<text x="'+(sx+sb/2)+'" y="'+(sy-18)+'" text-anchor="middle" class="ax">0.5 mi</text></svg>';
+    el.querySelectorAll(".eta").forEach(function(t){ etaEls[+t.dataset.i]=t; });
+    $("routeSrc").textContent="Illustrated mockup: stops are at their true coordinates; the shoreline, parks and main avenues are approximate. The dashed line links stops, not street paths.";
+  }
+
+  // ---------- go ----------
+  buildStops();
+  render();
+  mockMap();
+  updateEtas(schedule());
+})();
+</script>
+</body></html>
